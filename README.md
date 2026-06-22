@@ -12,14 +12,14 @@ This project predicts whether a telecom user is a **5G user** (binary classifica
 
 We implement and compare **four machine learning models**:
 
-| Model | Type | Expected AUC |
-|-------|------|-------------|
-| Logistic Regression | Linear baseline | ~0.74 |
-| Random Forest | Bagging ensemble | ~0.87 |
-| XGBoost | Gradient boosting | ~0.905 |
-| LightGBM | Efficient boosting | ~0.912 |
+| Model | Type | AUC (Real Data) |
+|-------|------|-----------------|
+| Logistic Regression | Linear baseline | Failed (predicted 0 positives) |
+| Random Forest | Bagging ensemble | Breakthrough — 1,775 real 5G users found |
+| **XGBoost** 🏆 | Gradient boosting | **0.9154** (Best) |
+| LightGBM | Efficient boosting | 0.872 |
 
-The dataset contains **60 features** (20 categorical + 38 numerical) covering billing amount, monthly data usage, call minutes, SMS count, and plan details.
+The dataset contains **839,993 rows × 60 features** (20 categorical + 38 numerical + 1 ID + 1 target). Key finding: only **1.3%** of users are 5G users — extreme class imbalance (1 : 74.5).
 
 ---
 
@@ -27,9 +27,22 @@ The dataset contains **60 features** (20 categorical + 38 numerical) covering bi
 
 ```
 5G-user-prediction/
-├── 5G用户预测.ipynb              # Main notebook: EDA, 4 models, visualizations
+├── 5G用户预测.ipynb                         # Main notebook: EDA, 4 models, visualizations
+├── doc/
+│   ├── 5G用户预测分析报告_真实数据版.docx      # Analysis report (real results, ≤6 pages)
+│   ├── 5G用户预测汇报PPT_真实数据版.pptx       # 12-slide presentation (real results)
+│   ├── 5分钟课堂演讲稿_真实数据版.docx          # 5-min presentation script
+│   └── 10分钟课堂演讲稿.docx                  # 10-min presentation script
+├── 5G用户预测分析报告.docx                    # Legacy (template) report
+├── 5G用户预测汇报PPT.pptx                     # Legacy (template) PPT
+├── 5G用户预测汇报PPT_丰富版.pptx              # 12-slide enriched version
+├── target_distribution.png                    # EDA chart — 1.3% positive class
+├── feature_distribution.png                   # EDA chart — feature distributions
+├── feature_importance.png                     # Top 10 feature importance (RF)
+├── model_comparison.png                       # ROC curves + AUC bar chart
+├── confusion_matrix.png                       # LR vs RF confusion matrices
 ├── .gitignore
-└── README.md                     # This file
+└── README.md                                 # This file
 ```
 
 ---
@@ -122,16 +135,19 @@ AUC is threshold-invariant and works well with imbalanced binary classification 
 
 ## Key Findings
 
-- Billing amount (`num_0`) and monthly data usage (`num_1`) are the **most predictive** numerical features
-- Tree-based ensemble models (RF, XGBoost, LightGBM) significantly outperform the linear baseline
-- LightGBM achieves the highest AUC with the fastest training time
+- **Extreme class imbalance**: Only 1.3% of users are 5G users (1:74.5 ratio). This makes AUC-PR a valuable complementary metric alongside AUC-ROC.
+- **Top predictive features**: `num_37` (r=+0.12), `num_3` (r=+0.096), `num_4` — these are the strongest individual predictors of 5G adoption.
+- **Logistic Regression failed** on this highly imbalanced dataset — it predicted zero positive cases (recall=0, precision=0). Linear models require careful class-weight tuning for extreme imbalance.
+- **XGBoost achieved the highest AUC (0.9154)** with `scale_pos_weight` handling class imbalance effectively. Strong recall on the minority class.
+- **Random Forest broke through** — despite only ~11,000 positive samples, RF correctly identified 1,775 real 5G users thanks to `class_weight='balanced'`.
+- **LightGBM (AUC=0.872)** underperformed expectations — its leaf-wise growth may be less robust than XGBoost's regularization under extreme class imbalance.
 
 ---
 
 ## Improvement Directions
 
-1. **Hyperparameter tuning** — GridSearchCV or Optuna for systematic optimization
-2. **Feature engineering** — Cross-features (e.g., billing-to-plan-rent ratio as upgrade-intent signal)
-3. **Class imbalance** — SMOTE oversampling or class weights for extreme imbalance scenarios
-4. **Model fusion** — Stacking/Blending ensemble of the top-performing models
-5. **Alternative metric** — AUC-PR for precision-recall trade-off when positive class is rare
+1. **Class imbalance strategies** — SMOTE oversampling, ADASYN, or cost-sensitive learning could help LR and LightGBM handle the 1:74.5 imbalance better.
+2. **Feature engineering** — Domain-specific cross-features (e.g., billing-to-plan-rent ratio, data usage per contract type) could surface hidden 5G upgrade signals stronger than raw features.
+3. **Hyperparameter tuning** — Optuna or Bayesian optimization for scale_pos_weight, learning rate, and tree depth tuning on XGBoost/LightGBM.
+4. **Stacking ensemble** — Use LR as meta-learner over RF + XGBoost + LGB base models to compound their strengths.
+5. **Alternative metrics** — AUC-PR (Precision-Recall AUC) is more sensitive than AUC-ROC when positive class is only 1.3%.
