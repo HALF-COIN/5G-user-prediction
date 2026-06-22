@@ -1,0 +1,26 @@
+# Python virtual environment
+.venv/
+venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Temporary Office files
+~$*.docx
+~$*.pptx
+~$*.xlsx
+
+# Large data files (download separately from course platform)
+train.csv
+*.csv
+
+# Generated images (will be regenerated when running notebook)
+*.png
+
+# IDE
+.vscode/
+.idea/
