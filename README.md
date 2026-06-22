@@ -28,9 +28,6 @@ The dataset contains **60 features** (20 categorical + 38 numerical) covering bi
 ```
 5G-user-prediction/
 ├── 5G用户预测.ipynb              # Main notebook: EDA, 4 models, visualizations
-├── 5G用户预测分析报告.docx        # Analysis report (≤6 pages, no source code)
-├── 5G用户预测汇报PPT.pptx         # Group presentation slides (8 pages)
-├── 小组分工方案.docx              # Team task division document
 ├── .gitignore
 └── README.md                     # This file
 ```
