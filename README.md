@@ -28,21 +28,8 @@ The dataset contains **839,993 rows × 60 features** (20 categorical + 38 numeri
 ```
 5G-user-prediction/
 ├── 5G用户预测.ipynb                         # Main notebook: EDA, 4 models, visualizations
-├── doc/
-│   ├── 5G用户预测分析报告_真实数据版.docx      # Analysis report (real results, ≤6 pages)
-│   ├── 5G用户预测汇报PPT_真实数据版.pptx       # 12-slide presentation (real results)
-│   ├── 5分钟课堂演讲稿_真实数据版.docx          # 5-min presentation script
-│   └── 10分钟课堂演讲稿.docx                  # 10-min presentation script
-├── 5G用户预测分析报告.docx                    # Legacy (template) report
-├── 5G用户预测汇报PPT.pptx                     # Legacy (template) PPT
-├── 5G用户预测汇报PPT_丰富版.pptx              # 12-slide enriched version
-├── target_distribution.png                    # EDA chart — 1.3% positive class
-├── feature_distribution.png                   # EDA chart — feature distributions
-├── feature_importance.png                     # Top 10 feature importance (RF)
-├── model_comparison.png                       # ROC curves + AUC bar chart
-├── confusion_matrix.png                       # LR vs RF confusion matrices
 ├── .gitignore
-└── README.md                                 # This file
+└── README.md                                # This file
 ```
 
 ---
